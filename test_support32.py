@@ -1,6 +1,6 @@
 """Supporting definitions for the Python regression tests."""
 
-if __name__ != 'test.support':
+if __name__ != 'test_support32':
     raise ImportError('support must be imported from the test package')
 
 import contextlib
@@ -458,7 +458,7 @@ TESTFN = "{}_{}_tmp".format(TESTFN, os.getpid())
 
 
 # TESTFN_UNICODE is a non-ascii filename
-TESTFN_UNICODE = TESTFN + "-\xe0\xf2\u0258\u0141\u011f"
+TESTFN_UNICODE = TESTFN + u"-\xe0\xf2\u0258\u0141\u011f"
 if sys.platform == 'darwin':
     # In Mac OS X's VFS API file names are, by definition, canonically
     # decomposed Unicode, encoded using UTF-8. See QA1173:
@@ -618,7 +618,7 @@ def open_urlresource(url, *args, **kw):
     # Verify the requirement before downloading the file
     requires('urlfetch')
 
-    print('\tfetching %s ...' % url, file=get_original_stdout())
+    print >>get_original_stdout(), '\tfetching %s ...' % url
     f = urllib.request.urlopen(url, timeout=15)
     try:
         with open(fn, "wb") as out:
@@ -865,7 +865,7 @@ ioerror_peer_reset = TransientResource(IOError, errno=errno.ECONNRESET)
 
 
 @contextlib.contextmanager
-def transient_internet(resource_name, *, timeout=30.0, errnos=()):
+def transient_internet(resource_name, timeout=30.0, errnos=(), *_argv):
     """Return a context manager that raises ResourceDenied when various issues
     with the Internet connection manifest themselves as exceptions."""
     default_errnos = [
@@ -900,7 +900,10 @@ def transient_internet(resource_name, *, timeout=30.0, errnos=()):
             n in captured_errnos):
             if not verbose:
                 sys.stderr.write(denied.args[0] + "\n")
-            raise denied from err
+            try:
+              raise err
+            except:
+              raise denied
 
     old_timeout = socket.getdefaulttimeout()
     try:

@@ -12,11 +12,14 @@ __all__ = ['update_wrapper', 'wraps', 'WRAPPER_ASSIGNMENTS', 'WRAPPER_UPDATES',
            'total_ordering', 'cmp_to_key', 'lru_cache', 'reduce', 'partial']
 
 from _functools import partial, reduce
-from collections import OrderedDict, namedtuple
+from collections import MutableMapping, namedtuple
+from reprlib32 import recursive_repr as _recursive_repr
+from weakref import proxy as _proxy
+import sys as _sys
 try:
     from _thread import allocate_lock as Lock
 except:
-    from _dummy_thread import allocate_lock as Lock
+    from _dummy_thread32 import allocate_lock as Lock
 
 ################################################################################
 ### OrderedDict
@@ -237,7 +240,7 @@ class OrderedDict(dict):
 # update_wrapper() and wraps() are tools to help write
 # wrapper functions that can handle naive introspection
 
-WRAPPER_ASSIGNMENTS = ('__module__', '__name__', '__doc__', '__annotations__')
+WRAPPER_ASSIGNMENTS = ('__module__', '__name__', '__doc__')
 WRAPPER_UPDATES = ('__dict__',)
 def update_wrapper(wrapper,
                    wrapped,
@@ -297,8 +300,7 @@ def total_ordering(cls):
                    ('__gt__', lambda self, other: self >= other and not self == other),
                    ('__lt__', lambda self, other: not self >= other)]
     }
-    # Find user-defined comparisons (not those inherited from object).
-    roots = [op for op in convert if getattr(cls, op, None) is not getattr(object, op, None)]
+    roots = set(dir(cls)) & set(convert)
     if not roots:
         raise ValueError('must define at least one ordering operation: < > <= >=')
     root = max(roots)       # prefer __lt__ to __le__ to __gt__ to __ge__
@@ -355,7 +357,7 @@ def lru_cache(maxsize=100):
     def decorating_function(user_function,
                 tuple=tuple, sorted=sorted, len=len, KeyError=KeyError):
 
-        hits = misses = 0
+        hits, misses = [0], [0]
         kwd_mark = (object(),)          # separates positional and keyword args
         lock = Lock()                   # needed because OrderedDict isn't threadsafe
 
@@ -364,19 +366,18 @@ def lru_cache(maxsize=100):
 
             @wraps(user_function)
             def wrapper(*args, **kwds):
-                nonlocal hits, misses
                 key = args
                 if kwds:
                     key += kwd_mark + tuple(sorted(kwds.items()))
                 try:
                     result = cache[key]
-                    hits += 1
+                    hits[0] += 1
                     return result
                 except KeyError:
                     pass
                 result = user_function(*args, **kwds)
                 cache[key] = result
-                misses += 1
+                misses[0] += 1
                 return result
         else:
             cache = OrderedDict()           # ordered least recent to most recent
@@ -385,7 +386,6 @@ def lru_cache(maxsize=100):
 
             @wraps(user_function)
             def wrapper(*args, **kwds):
-                nonlocal hits, misses
                 key = args
                 if kwds:
                     key += kwd_mark + tuple(sorted(kwds.items()))
@@ -393,14 +393,14 @@ def lru_cache(maxsize=100):
                     try:
                         result = cache[key]
                         cache_renew(key)    # record recent use of this key
-                        hits += 1
+                        hits[0] += 1
                         return result
                     except KeyError:
                         pass
                 result = user_function(*args, **kwds)
                 with lock:
                     cache[key] = result     # record recent use of this key
-                    misses += 1
+                    misses[0] += 1
                     if len(cache) > maxsize:
                         cache_popitem(0)    # purge least recently used cache entry
                 return result
@@ -408,14 +408,13 @@ def lru_cache(maxsize=100):
         def cache_info():
             """Report cache statistics"""
             with lock:
-                return _CacheInfo(hits, misses, maxsize, len(cache))
+                return _CacheInfo(hits[0], misses[0], maxsize, len(cache))
 
         def cache_clear():
             """Clear the cache and cache statistics"""
-            nonlocal hits, misses
             with lock:
                 cache.clear()
-                hits = misses = 0
+                hits[0] = misses[0] = 0
 
         wrapper.cache_info = cache_info
         wrapper.cache_clear = cache_clear
