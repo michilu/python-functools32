@@ -13,13 +13,13 @@ __all__ = ['update_wrapper', 'wraps', 'WRAPPER_ASSIGNMENTS', 'WRAPPER_UPDATES',
 
 from _functools import partial, reduce
 from collections import MutableMapping, namedtuple
-from reprlib32 import recursive_repr as _recursive_repr
+from .reprlib32 import recursive_repr as _recursive_repr
 from weakref import proxy as _proxy
 import sys as _sys
 try:
     from _thread import allocate_lock as Lock
 except:
-    from _dummy_thread32 import allocate_lock as Lock
+    from ._dummy_thread32 import allocate_lock as Lock
 
 ################################################################################
 ### OrderedDict

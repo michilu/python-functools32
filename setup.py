@@ -23,7 +23,7 @@ new features `lru_cache` (Least-recently-used cache decorator).""",
       maintainer_email='djmchl@gmail.com',
       url='https://github.com/MiCHiLU/python-functools32',
 
-      py_modules=['functools32'],
+      packages=['functools32'],
     )
 
 
