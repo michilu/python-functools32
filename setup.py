@@ -11,7 +11,7 @@ def main():
 
     setup(
       name='functools32',
-      version='3.2.3',
+      version='3.2.3-1',
       description='Backport of the functools module from Python 3.2.3 for use on 2.7 and PyPy.',
       long_description="""
 This is a backport of the functools standard library module from
