@@ -11,7 +11,7 @@ def main():
 
     setup(
       name='functools32',
-      version='3.2.3',
+      version='3.2.3-1',
       description='Backport of the functools module from Python 3.2.3 for use on 2.7 and PyPy.',
       long_description="""
 This is a backport of the functools standard library module from
@@ -23,7 +23,7 @@ new features `lru_cache` (Least-recently-used cache decorator).""",
       maintainer_email='djmchl@gmail.com',
       url='https://github.com/MiCHiLU/python-functools32',
 
-      py_modules=['functools32'],
+      packages=['functools32'],
     )
 
 
