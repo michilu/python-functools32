@@ -6,6 +6,7 @@ from test import support
 from weakref import proxy
 import pickle
 from random import choice
+from functools32 import OrderedDict
 
 @staticmethod
 def PythonPartial(func, *args, **keywords):
@@ -671,6 +672,21 @@ class TestLRU(unittest.TestCase):
             with self.assertRaises(IndexError):
                 func(15)
 
+class TestOrderedDict(unittest.TestCase):
+    def test_move_to_end(self):
+        od = OrderedDict.fromkeys('abcde')
+        self.assertEqual(list(od), list('abcde'))
+        od.move_to_end('c')
+        self.assertEqual(list(od), list('abdec'))
+        od.move_to_end('c', 0)
+        self.assertEqual(list(od), list('cabde'))
+        od.move_to_end('c', 0)
+        self.assertEqual(list(od), list('cabde'))
+        od.move_to_end('e')
+        self.assertEqual(list(od), list('cabde'))
+        with self.assertRaises(KeyError):
+            od.move_to_end('x')
+
 def test_main(verbose=None):
     test_classes = (
         TestPartial,
@@ -682,6 +698,7 @@ def test_main(verbose=None):
         TestWraps,
         TestReduce,
         TestLRU,
+        TestOrderedDict,
     )
     support.run_unittest(*test_classes)
 
