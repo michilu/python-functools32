@@ -2,7 +2,7 @@ import functools32 as functools
 import collections
 import sys
 import unittest
-import test_support32 as support
+import test_support27 as support
 from weakref import proxy
 import pickle
 from random import choice
