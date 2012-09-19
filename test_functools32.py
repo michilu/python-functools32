@@ -48,6 +48,8 @@ class TestPartial(unittest.TestCase):
         # attributes should not be writable
         if not isinstance(self.thetype, type):
             return
+        if "__pypy__" in sys.modules:
+            raise unittest.SkipTest("In the PyPy execution environment")
         self.assertRaises(TypeError, setattr, p, 'func', map)
         self.assertRaises(TypeError, setattr, p, 'args', (1, 2))
         self.assertRaises(TypeError, setattr, p, 'keywords', dict(a=1, b=2))
@@ -138,6 +140,8 @@ class TestPartial(unittest.TestCase):
         f = self.thetype(int, base=16)
         p = proxy(f)
         self.assertEqual(f.func, p.func)
+        if "__pypy__" in sys.modules:
+            raise unittest.SkipTest("In the PyPy execution environment")
         f = None
         self.assertRaises(ReferenceError, getattr, p, 'func')
 
