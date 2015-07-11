@@ -5,7 +5,7 @@ __all__ = ["Repr", "repr", "recursive_repr"]
 import __builtin__ as builtins
 from itertools import islice
 try:
-    from _thread import get_ident
+    from thread import get_ident
 except ImportError:
     from _dummy_thread32 import get_ident
 

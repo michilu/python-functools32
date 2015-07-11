@@ -17,8 +17,8 @@ from .reprlib32 import recursive_repr as _recursive_repr
 from weakref import proxy as _proxy
 import sys as _sys
 try:
-    from _thread import allocate_lock as Lock
-except:
+    from thread import allocate_lock as Lock
+except ImportError:
     from ._dummy_thread32 import allocate_lock as Lock
 
 ################################################################################
