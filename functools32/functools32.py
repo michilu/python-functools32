@@ -362,6 +362,7 @@ def lru_cache(maxsize=100):
         # hits, misses = [0], [0]
         kwd_mark = (object(),)          # separates positional and keyword args
         lock = Lock()                   # needed because OrderedDict isn't threadsafe
+        maxsizes = [maxsize]
 
         if maxsize is None:
             cache = dict()              # simple cache without ordering or size limit
@@ -403,7 +404,7 @@ def lru_cache(maxsize=100):
                 with lock:
                     cache[key] = result     # record recent use of this key
                     # misses[0] += 1
-                    if len(cache) > maxsize:
+                    if len(cache) > maxsizes[0]:
                         cache_popitem(0)    # purge least recently used cache entry
                 return result
 
@@ -418,8 +419,12 @@ def lru_cache(maxsize=100):
                 cache.clear()
                 # hits[0] = misses[0] = 0
 
-        wrapper.cache_info = cache_info
+        def reset_maxsize(maxsize):
+            maxsizes[0] = maxsize
+
+        # wrapper.cache_info = cache_info
         wrapper.cache_clear = cache_clear
+        wrapper.reset_maxsize = reset_maxsize
         return wrapper
 
     return decorating_function
