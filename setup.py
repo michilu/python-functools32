@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import sys
-from distutils.core import setup
+from setuptools import setup
 
 
 def main():
