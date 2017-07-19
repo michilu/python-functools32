@@ -18,6 +18,18 @@ This is a backport of the functools standard library module from
 Python 3.2.3 for use on Python 2.7 and PyPy. It includes
 new features `lru_cache` (Least-recently-used cache decorator).""",
       license='PSF license',
+      classifiers=(
+        'Development Status :: 5 - Production/Stable',
+        'Intended Audience :: Developers',
+        'Natural Language :: English',
+        'License :: OSI Approved :: Python Software Foundation License',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 2 :: Only',
+        'Programming Language :: Python :: Implementation :: CPython',
+        'Programming Language :: Python :: Implementation :: PyPy'
+    ),
 
       maintainer='ENDOH takanao',
       maintainer_email='djmchl@gmail.com',
