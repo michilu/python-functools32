@@ -26,7 +26,7 @@ new features `lru_cache` (Least-recently-used cache decorator).""",
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 2 :: Only'
+        'Programming Language :: Python :: 2 :: Only',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy'
     ),
